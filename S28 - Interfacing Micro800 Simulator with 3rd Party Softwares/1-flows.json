@@ -1,0 +1,724 @@
+[
+    {
+        "id": "da0319e44951886c",
+        "type": "tab",
+        "label": "Micro800 PLC",
+        "disabled": false,
+        "info": "",
+        "env": []
+    },
+    {
+        "id": "248e3a8c8576a9c6",
+        "type": "http request",
+        "z": "da0319e44951886c",
+        "name": "",
+        "method": "GET",
+        "ret": "obj",
+        "paytoqs": "ignore",
+        "url": "{{{topic}}}",
+        "tls": "",
+        "persist": false,
+        "proxy": "",
+        "authType": "",
+        "senderr": false,
+        "headers": [],
+        "x": 690,
+        "y": 240,
+        "wires": [
+            [
+                "5cb06cad75b4cfc7",
+                "ca33f160cb790662"
+            ]
+        ]
+    },
+    {
+        "id": "ade2e04bd435aa88",
+        "type": "inject",
+        "z": "da0319e44951886c",
+        "name": "",
+        "props": [
+            {
+                "p": "payload"
+            },
+            {
+                "p": "topic",
+                "vt": "str"
+            }
+        ],
+        "repeat": "1",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "topic": "",
+        "payload": "",
+        "payloadType": "date",
+        "x": 130,
+        "y": 240,
+        "wires": [
+            [
+                "ffa0dd23b354fd8f",
+                "1c858959c217efbd"
+            ]
+        ]
+    },
+    {
+        "id": "5cb06cad75b4cfc7",
+        "type": "debug",
+        "z": "da0319e44951886c",
+        "name": "debug 6",
+        "active": true,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "payload",
+        "targetType": "msg",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 900,
+        "y": 200,
+        "wires": []
+    },
+    {
+        "id": "6c7977e46e7b9422",
+        "type": "comment",
+        "z": "da0319e44951886c",
+        "name": "Read Inputs",
+        "info": "",
+        "x": 110,
+        "y": 180,
+        "wires": []
+    },
+    {
+        "id": "a03bb1a12e4e959f",
+        "type": "comment",
+        "z": "da0319e44951886c",
+        "name": "Write Input",
+        "info": "",
+        "x": 100,
+        "y": 440,
+        "wires": []
+    },
+    {
+        "id": "779475ffc78e32cf",
+        "type": "http request",
+        "z": "da0319e44951886c",
+        "name": "",
+        "method": "POST",
+        "ret": "txt",
+        "paytoqs": "ignore",
+        "url": "{{{topic}}}",
+        "tls": "",
+        "persist": false,
+        "proxy": "",
+        "authType": "",
+        "senderr": false,
+        "headers": [],
+        "x": 710,
+        "y": 560,
+        "wires": [
+            [
+                "1f36f0a1e69a8249"
+            ]
+        ]
+    },
+    {
+        "id": "1f36f0a1e69a8249",
+        "type": "debug",
+        "z": "da0319e44951886c",
+        "name": "debug 8",
+        "active": true,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "false",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 900,
+        "y": 560,
+        "wires": []
+    },
+    {
+        "id": "e232302cca0d587d",
+        "type": "function",
+        "z": "da0319e44951886c",
+        "name": "Digital input",
+        "func": "var APICommPort = flow.get('APICommPort') || 0;\nmsg.topic = \"http://localhost:\" + String(APICommPort) + \"/inputs\";\nmsg.payload = [\n\n    { \"Name\": \"_IO_EM_DI_00\", \"Value\": \"True\" },\n\n    { \"Name\": \"_IO_EM_DI_01\", \"Value\": \"False\" }\n\n];\n    \nreturn msg;",
+        "outputs": 1,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 370,
+        "y": 520,
+        "wires": [
+            [
+                "779475ffc78e32cf"
+            ]
+        ]
+    },
+    {
+        "id": "3d53bd80c6c2568b",
+        "type": "ui_led",
+        "z": "da0319e44951886c",
+        "order": 5,
+        "group": "2321109ebd6e118b",
+        "width": 0,
+        "height": 0,
+        "label": "Door opened",
+        "labelPlacement": "left",
+        "labelAlignment": "left",
+        "colorForValue": [
+            {
+                "color": "#808080",
+                "value": "false",
+                "valueType": "bool"
+            },
+            {
+                "color": "#00ff00",
+                "value": "true",
+                "valueType": "bool"
+            }
+        ],
+        "allowColorForValueInMessage": false,
+        "shape": "circle",
+        "showGlow": true,
+        "name": "Door opened",
+        "x": 1330,
+        "y": 200,
+        "wires": []
+    },
+    {
+        "id": "cf309b180ae7b420",
+        "type": "ui_led",
+        "z": "da0319e44951886c",
+        "order": 7,
+        "group": "2321109ebd6e118b",
+        "width": 0,
+        "height": 0,
+        "label": "Door closed",
+        "labelPlacement": "left",
+        "labelAlignment": "left",
+        "colorForValue": [
+            {
+                "color": "#808080",
+                "value": "false",
+                "valueType": "bool"
+            },
+            {
+                "color": "#00ff00",
+                "value": "true",
+                "valueType": "bool"
+            }
+        ],
+        "allowColorForValueInMessage": false,
+        "shape": "circle",
+        "showGlow": true,
+        "name": "Door closed",
+        "x": 1330,
+        "y": 240,
+        "wires": []
+    },
+    {
+        "id": "f23187369d5b07b0",
+        "type": "ui_led",
+        "z": "da0319e44951886c",
+        "order": 6,
+        "group": "2321109ebd6e118b",
+        "width": 0,
+        "height": 0,
+        "label": "Door in motion",
+        "labelPlacement": "left",
+        "labelAlignment": "left",
+        "colorForValue": [
+            {
+                "color": "#808080",
+                "value": "false",
+                "valueType": "bool"
+            },
+            {
+                "color": "#ffa500",
+                "value": "true",
+                "valueType": "bool"
+            }
+        ],
+        "allowColorForValueInMessage": false,
+        "shape": "circle",
+        "showGlow": true,
+        "name": "Door in motion",
+        "x": 1340,
+        "y": 280,
+        "wires": []
+    },
+    {
+        "id": "ffa0dd23b354fd8f",
+        "type": "function",
+        "z": "da0319e44951886c",
+        "name": "Get input status",
+        "func": "var APICommPort = flow.get('APICommPort')||0;\nmsg.topic = \"http://localhost:\" + String(APICommPort) +\"/inputs\";\nreturn msg;",
+        "outputs": 1,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 400,
+        "y": 220,
+        "wires": [
+            [
+                "248e3a8c8576a9c6"
+            ]
+        ]
+    },
+    {
+        "id": "1c858959c217efbd",
+        "type": "function",
+        "z": "da0319e44951886c",
+        "name": "Get output  status",
+        "func": "var APICommPort = flow.get('APICommPort') || 0;\nmsg.topic = \"http://localhost:\" + String(APICommPort) + \"/outputs\";\nreturn msg;",
+        "outputs": 1,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 410,
+        "y": 260,
+        "wires": [
+            [
+                "248e3a8c8576a9c6"
+            ]
+        ]
+    },
+    {
+        "id": "69c3c5aaa22a4240",
+        "type": "function",
+        "z": "da0319e44951886c",
+        "name": "Analog input 2",
+        "func": "var APICommPort = flow.get('APICommPort') || 0;\nmsg.topic = \"http://localhost:\" + String(APICommPort) + \"/inputs\";\nmsg.payload = [\n\n    { \"Name\": \"_IO_P1_AI_01\", \"Value\": String((msg.payload * 409.6).toFixed(0)) },\n\n];\n    \nreturn msg;",
+        "outputs": 1,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 380,
+        "y": 640,
+        "wires": [
+            [
+                "779475ffc78e32cf"
+            ]
+        ]
+    },
+    {
+        "id": "ef764567fc799cf4",
+        "type": "ui_text_input",
+        "z": "da0319e44951886c",
+        "name": "",
+        "label": "Enter API Comm Port",
+        "tooltip": "Check on the Micro800 Simulator",
+        "group": "2321109ebd6e118b",
+        "order": 1,
+        "width": 0,
+        "height": 0,
+        "passthru": true,
+        "mode": "number",
+        "delay": "0",
+        "topic": "topic",
+        "sendOnBlur": true,
+        "className": "",
+        "topicType": "msg",
+        "x": 140,
+        "y": 100,
+        "wires": [
+            [
+                "f5045cd3f1178f52"
+            ]
+        ]
+    },
+    {
+        "id": "f5045cd3f1178f52",
+        "type": "function",
+        "z": "da0319e44951886c",
+        "name": "Flowset",
+        "func": "flow.set('APICommPort',msg.payload);",
+        "outputs": 1,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 380,
+        "y": 100,
+        "wires": [
+            []
+        ]
+    },
+    {
+        "id": "a516decb3583e351",
+        "type": "comment",
+        "z": "da0319e44951886c",
+        "name": "API Comm Port",
+        "info": "",
+        "x": 120,
+        "y": 60,
+        "wires": []
+    },
+    {
+        "id": "eb3722953ca96835",
+        "type": "function",
+        "z": "da0319e44951886c",
+        "name": "function 2",
+        "func": "msg.payload = msg.payload[4].Value;\nreturn msg;",
+        "outputs": 1,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 1140,
+        "y": 200,
+        "wires": [
+            [
+                "3d53bd80c6c2568b"
+            ]
+        ]
+    },
+    {
+        "id": "2ebdeddc2742a30d",
+        "type": "function",
+        "z": "da0319e44951886c",
+        "name": "function 3",
+        "func": "msg.payload = msg.payload[3].Value;\nreturn msg;",
+        "outputs": 1,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 1140,
+        "y": 240,
+        "wires": [
+            [
+                "cf309b180ae7b420"
+            ]
+        ]
+    },
+    {
+        "id": "ca33f160cb790662",
+        "type": "switch",
+        "z": "da0319e44951886c",
+        "name": "",
+        "property": "topic",
+        "propertyType": "msg",
+        "rules": [
+            {
+                "t": "cont",
+                "v": "inputs",
+                "vt": "str"
+            },
+            {
+                "t": "cont",
+                "v": "outputs",
+                "vt": "str"
+            }
+        ],
+        "checkall": "true",
+        "repair": false,
+        "outputs": 2,
+        "x": 930,
+        "y": 240,
+        "wires": [
+            [
+                "eb3722953ca96835",
+                "2ebdeddc2742a30d"
+            ],
+            [
+                "ab4a2f9d2f8b1b29",
+                "d4405ad1dcf06a8f",
+                "f3f53355ae821008"
+            ]
+        ]
+    },
+    {
+        "id": "ab4a2f9d2f8b1b29",
+        "type": "function",
+        "z": "da0319e44951886c",
+        "name": "function 4",
+        "func": "msg.payload = msg.payload[2].Value;\nreturn msg;",
+        "outputs": 1,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 1140,
+        "y": 280,
+        "wires": [
+            [
+                "f23187369d5b07b0"
+            ]
+        ]
+    },
+    {
+        "id": "715d1bd3a32d7f81",
+        "type": "ui_button",
+        "z": "da0319e44951886c",
+        "name": "",
+        "group": "2321109ebd6e118b",
+        "order": 3,
+        "width": "3",
+        "height": "1",
+        "passthru": false,
+        "label": "Open door",
+        "tooltip": "",
+        "color": "",
+        "bgcolor": "green",
+        "className": "",
+        "icon": "",
+        "payload": "",
+        "payloadType": "str",
+        "topic": "topic",
+        "topicType": "msg",
+        "x": 110,
+        "y": 520,
+        "wires": [
+            [
+                "e232302cca0d587d"
+            ]
+        ]
+    },
+    {
+        "id": "45cfc6705f4441c2",
+        "type": "ui_button",
+        "z": "da0319e44951886c",
+        "name": "",
+        "group": "2321109ebd6e118b",
+        "order": 4,
+        "width": "3",
+        "height": "1",
+        "passthru": false,
+        "label": "Close door",
+        "tooltip": "",
+        "color": "",
+        "bgcolor": "red",
+        "className": "",
+        "icon": "",
+        "payload": "",
+        "payloadType": "str",
+        "topic": "topic",
+        "topicType": "msg",
+        "x": 110,
+        "y": 560,
+        "wires": [
+            [
+                "5ffe4ff631102323"
+            ]
+        ]
+    },
+    {
+        "id": "5ffe4ff631102323",
+        "type": "function",
+        "z": "da0319e44951886c",
+        "name": "Digital input",
+        "func": "var APICommPort = flow.get('APICommPort') || 0;\nmsg.topic = \"http://localhost:\" + String(APICommPort) + \"/inputs\";\nmsg.payload = [\n\n    { \"Name\": \"_IO_EM_DI_00\", \"Value\": \"False\" },\n\n    { \"Name\": \"_IO_EM_DI_01\", \"Value\": \"True\" }\n\n];\n    \nreturn msg;",
+        "outputs": 1,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 370,
+        "y": 560,
+        "wires": [
+            [
+                "779475ffc78e32cf"
+            ]
+        ]
+    },
+    {
+        "id": "4ad54ad8ee33f041",
+        "type": "ui_slider",
+        "z": "da0319e44951886c",
+        "name": "",
+        "label": "Analog Input 1",
+        "tooltip": "",
+        "group": "2321109ebd6e118b",
+        "order": 7,
+        "width": 0,
+        "height": 0,
+        "passthru": true,
+        "outs": "end",
+        "topic": "ai1",
+        "topicType": "msg",
+        "min": 0,
+        "max": "10",
+        "step": "0.1",
+        "className": "",
+        "x": 120,
+        "y": 600,
+        "wires": [
+            [
+                "11fdc318bb1db210"
+            ]
+        ]
+    },
+    {
+        "id": "f4bb2886acf03b98",
+        "type": "ui_slider",
+        "z": "da0319e44951886c",
+        "name": "",
+        "label": "Analog Input 2",
+        "tooltip": "",
+        "group": "2321109ebd6e118b",
+        "order": 7,
+        "width": 0,
+        "height": 0,
+        "passthru": true,
+        "outs": "end",
+        "topic": "ai2",
+        "topicType": "msg",
+        "min": 0,
+        "max": "10",
+        "step": "0.1",
+        "className": "",
+        "x": 120,
+        "y": 640,
+        "wires": [
+            [
+                "69c3c5aaa22a4240"
+            ]
+        ]
+    },
+    {
+        "id": "11fdc318bb1db210",
+        "type": "function",
+        "z": "da0319e44951886c",
+        "name": "Analog input 1",
+        "func": "var APICommPort = flow.get('APICommPort') || 0;\nmsg.topic = \"http://localhost:\" + String(APICommPort) + \"/inputs\";\nmsg.payload = [\n\n    { \"Name\": \"_IO_P1_AI_00\", \"Value\": String((msg.payload * 409.6).toFixed(0)) },\n\n];\n    \nreturn msg;",
+        "outputs": 1,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 380,
+        "y": 600,
+        "wires": [
+            [
+                "779475ffc78e32cf"
+            ]
+        ]
+    },
+    {
+        "id": "3c27709fd896e8d6",
+        "type": "ui_gauge",
+        "z": "da0319e44951886c",
+        "name": "",
+        "group": "2321109ebd6e118b",
+        "order": 9,
+        "width": 0,
+        "height": 0,
+        "gtype": "gage",
+        "title": "Analog Output 1",
+        "label": "units",
+        "format": "{{value}}",
+        "min": 0,
+        "max": 10,
+        "colors": [
+            "#00b500",
+            "#e6e600",
+            "#ca3838"
+        ],
+        "seg1": "",
+        "seg2": "",
+        "className": "",
+        "x": 1320,
+        "y": 400,
+        "wires": []
+    },
+    {
+        "id": "2b0e4286a2550874",
+        "type": "ui_gauge",
+        "z": "da0319e44951886c",
+        "name": "",
+        "group": "2321109ebd6e118b",
+        "order": 9,
+        "width": 0,
+        "height": 0,
+        "gtype": "gage",
+        "title": "Analog Output 2",
+        "label": "units",
+        "format": "{{value}}",
+        "min": 0,
+        "max": 10,
+        "colors": [
+            "#00b500",
+            "#e6e600",
+            "#ca3838"
+        ],
+        "seg1": "",
+        "seg2": "",
+        "className": "",
+        "x": 1320,
+        "y": 440,
+        "wires": []
+    },
+    {
+        "id": "d4405ad1dcf06a8f",
+        "type": "function",
+        "z": "da0319e44951886c",
+        "name": "function 5",
+        "func": "msg.payload = (msg.payload[20].Value/409.6).toFixed(1);\nreturn msg;",
+        "outputs": 1,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 1140,
+        "y": 400,
+        "wires": [
+            [
+                "3c27709fd896e8d6"
+            ]
+        ]
+    },
+    {
+        "id": "f3f53355ae821008",
+        "type": "function",
+        "z": "da0319e44951886c",
+        "name": "function 6",
+        "func": "msg.payload = (msg.payload[21].Value / 409.6).toFixed(1);\nreturn msg;",
+        "outputs": 1,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 1140,
+        "y": 440,
+        "wires": [
+            [
+                "2b0e4286a2550874"
+            ]
+        ]
+    },
+    {
+        "id": "9b6268025b9d8090",
+        "type": "ui_spacer",
+        "z": "da0319e44951886c",
+        "name": "spacer",
+        "group": "2321109ebd6e118b",
+        "order": 2,
+        "width": "6",
+        "height": "1"
+    },
+    {
+        "id": "2321109ebd6e118b",
+        "type": "ui_group",
+        "name": "Simumatik",
+        "tab": "bd7d149026cbfb80",
+        "order": 1,
+        "disp": true,
+        "width": "6",
+        "collapse": false,
+        "className": ""
+    },
+    {
+        "id": "bd7d149026cbfb80",
+        "type": "ui_tab",
+        "name": "Status",
+        "icon": "dashboard",
+        "disabled": false,
+        "hidden": false
+    }
+]

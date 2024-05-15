@@ -1,0 +1,1239 @@
+[
+    {
+        "id": "b038c76be813100c",
+        "type": "tab",
+        "label": "Process Simulator",
+        "disabled": false,
+        "info": "",
+        "env": []
+    },
+    {
+        "id": "f5f5be8541165f4a",
+        "type": "inject",
+        "z": "b038c76be813100c",
+        "name": "",
+        "props": [
+            {
+                "p": "payload"
+            },
+            {
+                "p": "topic",
+                "vt": "str"
+            }
+        ],
+        "repeat": "1",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "topic": "",
+        "payload": "",
+        "payloadType": "date",
+        "x": 130,
+        "y": 120,
+        "wires": [
+            [
+                "48d64e33eb159c6d",
+                "1d7f769cace44d09"
+            ]
+        ]
+    },
+    {
+        "id": "48d64e33eb159c6d",
+        "type": "modbus-getter",
+        "z": "b038c76be813100c",
+        "name": "",
+        "showStatusActivities": false,
+        "showErrors": false,
+        "showWarnings": true,
+        "logIOActivities": false,
+        "unitid": "1",
+        "dataType": "HoldingRegister",
+        "adr": "0",
+        "quantity": "4",
+        "server": "cf1130a27f1da8eb",
+        "useIOFile": false,
+        "ioFile": "",
+        "useIOForPayload": false,
+        "emptyMsgOnFail": false,
+        "keepMsgProperties": false,
+        "delayOnStart": false,
+        "startDelayTime": "",
+        "x": 340,
+        "y": 120,
+        "wires": [
+            [
+                "6bbfba2044e68d0c",
+                "e079e606498b35d2",
+                "812fd13fe1356f70"
+            ],
+            []
+        ]
+    },
+    {
+        "id": "a919af18f637c1e2",
+        "type": "debug",
+        "z": "b038c76be813100c",
+        "name": "debug 4",
+        "active": false,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "false",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 820,
+        "y": 80,
+        "wires": []
+    },
+    {
+        "id": "7d8856710ea33033",
+        "type": "comment",
+        "z": "b038c76be813100c",
+        "name": "Modbus 16bit to REAL",
+        "info": "",
+        "x": 120,
+        "y": 80,
+        "wires": []
+    },
+    {
+        "id": "6bbfba2044e68d0c",
+        "type": "function",
+        "z": "b038c76be813100c",
+        "name": "Convert to REAL",
+        "func": "// Create a buffer\nvar buf = new ArrayBuffer(4);//0,1,2,3\n\n// Create a data view of it\nvar view = new DataView(buf);\n\n// Write the ints to it\nview.setUint16(0, msg.payload[1]);\nview.setUint16(2, msg.payload[0]);\n\n// Read the bits as a float; note that by doing this, we're implicitly\n// converting it from a 32-bit float into JavaScript's native 64-bit double\nvar num = view.getFloat32(0);\n// Done\nmsg.topic = \"Set-Point\";\nmsg.payload = Number(num.toFixed(2));\nreturn msg;",
+        "outputs": 1,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 590,
+        "y": 120,
+        "wires": [
+            [
+                "80621e62f80a53e4",
+                "a8a0b875c84f8e5b",
+                "a919af18f637c1e2"
+            ]
+        ]
+    },
+    {
+        "id": "a50163cb3d63e6a0",
+        "type": "comment",
+        "z": "b038c76be813100c",
+        "name": "Modbus REAL to 16bit",
+        "info": "",
+        "x": 120,
+        "y": 320,
+        "wires": []
+    },
+    {
+        "id": "e657bba2ff75f327",
+        "type": "buffer-parser",
+        "z": "b038c76be813100c",
+        "name": "",
+        "data": "payload",
+        "dataType": "msg",
+        "specification": "spec",
+        "specificationType": "ui",
+        "items": [
+            {
+                "type": "uint16be",
+                "name": "item1",
+                "offset": 0,
+                "length": 2,
+                "offsetbit": 0,
+                "scale": "1",
+                "mask": ""
+            }
+        ],
+        "swap1": "swap16",
+        "swap2": "swap32",
+        "swap3": "",
+        "swap1Type": "swap",
+        "swap2Type": "swap",
+        "swap3Type": "swap",
+        "msgProperty": "payload",
+        "msgPropertyType": "str",
+        "resultType": "value",
+        "resultTypeType": "return",
+        "multipleResult": true,
+        "fanOutMultipleResult": false,
+        "setTopic": true,
+        "outputs": 1,
+        "x": 570,
+        "y": 360,
+        "wires": [
+            [
+                "687fbeb9d2427917",
+                "461e7d161249a3c6"
+            ]
+        ]
+    },
+    {
+        "id": "cf7a2901f211a2cd",
+        "type": "function",
+        "z": "b038c76be813100c",
+        "name": "function 9",
+        "func": "// Input - REAL value\nvar realValue = msg.payload;\n\n// Convert REAL to Buffer\nvar buffer = Buffer.alloc(4); // Create a buffer of 4 bytes (32 bits)\nbuffer.writeFloatBE(realValue, 0); // Write the REAL value to the buffer\n\n// Output - Buffer\nmsg.payload = buffer;\nreturn msg;",
+        "outputs": 1,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 320,
+        "y": 360,
+        "wires": [
+            [
+                "e657bba2ff75f327",
+                "b7147682c31c8f6e"
+            ]
+        ]
+    },
+    {
+        "id": "687fbeb9d2427917",
+        "type": "modbus-write",
+        "z": "b038c76be813100c",
+        "name": "",
+        "showStatusActivities": false,
+        "showErrors": false,
+        "showWarnings": true,
+        "unitid": "1",
+        "dataType": "MHoldingRegisters",
+        "adr": "0",
+        "quantity": "2",
+        "server": "cf1130a27f1da8eb",
+        "emptyMsgOnFail": false,
+        "keepMsgProperties": false,
+        "delayOnStart": false,
+        "startDelayTime": "",
+        "x": 840,
+        "y": 360,
+        "wires": [
+            [],
+            []
+        ]
+    },
+    {
+        "id": "e079e606498b35d2",
+        "type": "function",
+        "z": "b038c76be813100c",
+        "name": "Convert to REAL",
+        "func": "// Create a buffer\nvar buf = new ArrayBuffer(4);\n\n// Create a data view of it\nvar view = new DataView(buf);\n\n// Write the ints to it\nview.setUint16(0, msg.payload[3]);\nview.setUint16(2, msg.payload[2]);\n\n// Read the bits as a float; note that by doing this, we're implicitly\n// converting it from a 32-bit float into JavaScript's native 64-bit double\nvar num = view.getFloat32(0);\n// Done\nmsg.topic = \"Actual Temp.\";\nmsg.payload = Number(num.toFixed(2));\nreturn msg;",
+        "outputs": 1,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 590,
+        "y": 200,
+        "wires": [
+            [
+                "3e41644390473b12",
+                "80621e62f80a53e4",
+                "a919af18f637c1e2"
+            ]
+        ]
+    },
+    {
+        "id": "bdeb2b430f1f854a",
+        "type": "ui_slider",
+        "z": "b038c76be813100c",
+        "name": "",
+        "label": "Set-Point",
+        "tooltip": "",
+        "group": "d33f5be9621178a8",
+        "order": 1,
+        "width": 0,
+        "height": 0,
+        "passthru": true,
+        "outs": "end",
+        "topic": "topic",
+        "topicType": "msg",
+        "min": 0,
+        "max": "100.0",
+        "step": "0.1",
+        "className": "",
+        "x": 140,
+        "y": 360,
+        "wires": [
+            [
+                "cf7a2901f211a2cd"
+            ]
+        ]
+    },
+    {
+        "id": "3e41644390473b12",
+        "type": "ui_artlessgauge",
+        "z": "b038c76be813100c",
+        "group": "d33f5be9621178a8",
+        "order": 2,
+        "width": 0,
+        "height": 0,
+        "name": "Actual Temperature",
+        "icon": "",
+        "label": "Actual Temperature",
+        "unit": "°C",
+        "layout": "linear",
+        "decimals": "2",
+        "differential": false,
+        "minmax": false,
+        "colorTrack": "#555555",
+        "style": "",
+        "colorFromTheme": true,
+        "property": "payload",
+        "secondary": "secondary",
+        "inline": false,
+        "animate": true,
+        "sectors": [
+            {
+                "val": 0,
+                "col": "#41bbbe",
+                "t": "min",
+                "dot": 0
+            },
+            {
+                "val": 30,
+                "col": "#ff6666",
+                "t": "sec",
+                "dot": 0
+            },
+            {
+                "val": 100,
+                "col": "#ff6666",
+                "t": "max",
+                "dot": 0
+            }
+        ],
+        "lineWidth": 3,
+        "bgcolorFromTheme": true,
+        "diffCenter": "",
+        "x": 850,
+        "y": 200,
+        "wires": []
+    },
+    {
+        "id": "80621e62f80a53e4",
+        "type": "ui_chart",
+        "z": "b038c76be813100c",
+        "name": "",
+        "group": "d33f5be9621178a8",
+        "order": 4,
+        "width": "6",
+        "height": "4",
+        "label": "Set-Point vs Actual Temp.",
+        "chartType": "line",
+        "legend": "true",
+        "xformat": "HH:mm:ss",
+        "interpolate": "linear",
+        "nodata": "",
+        "dot": false,
+        "ymin": "0",
+        "ymax": "100",
+        "removeOlder": "1",
+        "removeOlderPoints": "",
+        "removeOlderUnit": "60",
+        "cutout": 0,
+        "useOneColor": false,
+        "useUTC": false,
+        "colors": [
+            "#ff8000",
+            "#66e458",
+            "#ff7f0e",
+            "#2ca02c",
+            "#98df8a",
+            "#d62728",
+            "#ff9896",
+            "#9467bd",
+            "#c5b0d5"
+        ],
+        "outputs": 1,
+        "useDifferentColor": false,
+        "className": "",
+        "x": 870,
+        "y": 160,
+        "wires": [
+            []
+        ]
+    },
+    {
+        "id": "19a56ce951f447c7",
+        "type": "ui_led",
+        "z": "b038c76be813100c",
+        "order": 3,
+        "group": "d33f5be9621178a8",
+        "width": 0,
+        "height": 0,
+        "label": "Heating",
+        "labelPlacement": "left",
+        "labelAlignment": "left",
+        "colorForValue": [
+            {
+                "color": "#808080",
+                "value": "false",
+                "valueType": "bool"
+            },
+            {
+                "color": "#00ff00",
+                "value": "true",
+                "valueType": "bool"
+            }
+        ],
+        "allowColorForValueInMessage": false,
+        "shape": "circle",
+        "showGlow": true,
+        "name": "Heating",
+        "x": 820,
+        "y": 260,
+        "wires": []
+    },
+    {
+        "id": "1d7f769cace44d09",
+        "type": "modbus-getter",
+        "z": "b038c76be813100c",
+        "name": "",
+        "showStatusActivities": false,
+        "showErrors": false,
+        "showWarnings": true,
+        "logIOActivities": false,
+        "unitid": "1",
+        "dataType": "Coil",
+        "adr": "0",
+        "quantity": "1",
+        "server": "cf1130a27f1da8eb",
+        "useIOFile": false,
+        "ioFile": "",
+        "useIOForPayload": false,
+        "emptyMsgOnFail": false,
+        "keepMsgProperties": false,
+        "delayOnStart": false,
+        "startDelayTime": "",
+        "x": 340,
+        "y": 260,
+        "wires": [
+            [
+                "0d736a894601a30d",
+                "a0442dcf34f94a0e"
+            ],
+            []
+        ]
+    },
+    {
+        "id": "0d736a894601a30d",
+        "type": "function",
+        "z": "b038c76be813100c",
+        "name": "function 10",
+        "func": "msg.payload = msg.payload[0];\nreturn msg;",
+        "outputs": 1,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 570,
+        "y": 240,
+        "wires": [
+            [
+                "19a56ce951f447c7"
+            ]
+        ]
+    },
+    {
+        "id": "a8a0b875c84f8e5b",
+        "type": "ui_artlessgauge",
+        "z": "b038c76be813100c",
+        "group": "d33f5be9621178a8",
+        "order": 2,
+        "width": 0,
+        "height": 0,
+        "name": "Set-Point",
+        "icon": "",
+        "label": "Set-Point",
+        "unit": "°C",
+        "layout": "linear",
+        "decimals": "2",
+        "differential": false,
+        "minmax": false,
+        "colorTrack": "#555555",
+        "style": "",
+        "colorFromTheme": true,
+        "property": "payload",
+        "secondary": "secondary",
+        "inline": false,
+        "animate": true,
+        "sectors": [
+            {
+                "val": 0,
+                "col": "#41bbbe",
+                "t": "min",
+                "dot": 0
+            },
+            {
+                "val": 30,
+                "col": "#ff6666",
+                "t": "sec",
+                "dot": 0
+            },
+            {
+                "val": 100,
+                "col": "#ff6666",
+                "t": "max",
+                "dot": 0
+            }
+        ],
+        "lineWidth": 3,
+        "bgcolorFromTheme": true,
+        "diffCenter": "",
+        "x": 820,
+        "y": 120,
+        "wires": []
+    },
+    {
+        "id": "88ffc58a01b7234b",
+        "type": "comment",
+        "z": "b038c76be813100c",
+        "name": "Temperature Control",
+        "info": "",
+        "x": 110,
+        "y": 40,
+        "wires": []
+    },
+    {
+        "id": "b8aab3bccb4b6d06",
+        "type": "comment",
+        "z": "b038c76be813100c",
+        "name": "Level Control",
+        "info": "",
+        "x": 90,
+        "y": 460,
+        "wires": []
+    },
+    {
+        "id": "b6d1e8cecd9f0a92",
+        "type": "inject",
+        "z": "b038c76be813100c",
+        "name": "",
+        "props": [
+            {
+                "p": "payload"
+            },
+            {
+                "p": "topic",
+                "vt": "str"
+            }
+        ],
+        "repeat": "1",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "topic": "",
+        "payload": "",
+        "payloadType": "date",
+        "x": 130,
+        "y": 600,
+        "wires": [
+            [
+                "bc9f6635543964ce"
+            ]
+        ]
+    },
+    {
+        "id": "bc9f6635543964ce",
+        "type": "modbus-getter",
+        "z": "b038c76be813100c",
+        "name": "",
+        "showStatusActivities": false,
+        "showErrors": false,
+        "showWarnings": true,
+        "logIOActivities": false,
+        "unitid": "1",
+        "dataType": "HoldingRegister",
+        "adr": "4",
+        "quantity": "8",
+        "server": "cf1130a27f1da8eb",
+        "useIOFile": false,
+        "ioFile": "",
+        "useIOForPayload": false,
+        "emptyMsgOnFail": false,
+        "keepMsgProperties": false,
+        "delayOnStart": false,
+        "startDelayTime": "",
+        "x": 340,
+        "y": 600,
+        "wires": [
+            [
+                "10ac089636c6e7d0",
+                "a9db9f8ca38b6841",
+                "c18ec5864d980155",
+                "e529f788795a8575"
+            ],
+            []
+        ]
+    },
+    {
+        "id": "10ac089636c6e7d0",
+        "type": "function",
+        "z": "b038c76be813100c",
+        "name": "Convert to REAL",
+        "func": "// Create a buffer\nvar buf = new ArrayBuffer(4);\n\n// Create a data view of it\nvar view = new DataView(buf);\n\n// Write the ints to it\nview.setUint16(0, msg.payload[3]);\nview.setUint16(2, msg.payload[2]);\n\n// Read the bits as a float; note that by doing this, we're implicitly\n// converting it from a 32-bit float into JavaScript's native 64-bit double\nvar num = view.getFloat32(0);\n// Done\nmsg.topic = \"Tank Level\";\nmsg.payload = Number(num.toFixed(2));\nreturn msg;",
+        "outputs": 1,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 590,
+        "y": 640,
+        "wires": [
+            [
+                "21bbf34127b7d514",
+                "be3468dee7a70f5d"
+            ]
+        ]
+    },
+    {
+        "id": "a9db9f8ca38b6841",
+        "type": "function",
+        "z": "b038c76be813100c",
+        "name": "Convert to REAL",
+        "func": "// Create a buffer\nvar buf = new ArrayBuffer(4);\n\n// Create a data view of it\nvar view = new DataView(buf);\n\n// Write the ints to it\nview.setUint16(0, msg.payload[5]);\nview.setUint16(2, msg.payload[4]);\n\n// Read the bits as a float; note that by doing this, we're implicitly\n// converting it from a 32-bit float into JavaScript's native 64-bit double\nvar num = view.getFloat32(0);\n// Done\nmsg.topic = \"Draining Output\";\nmsg.payload = Number(num.toFixed(2));\nreturn msg;",
+        "outputs": 1,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 590,
+        "y": 700,
+        "wires": [
+            [
+                "c9ae2a6e1acd7631"
+            ]
+        ]
+    },
+    {
+        "id": "2578df5702758cc0",
+        "type": "buffer-parser",
+        "z": "b038c76be813100c",
+        "name": "",
+        "data": "payload",
+        "dataType": "msg",
+        "specification": "spec",
+        "specificationType": "ui",
+        "items": [
+            {
+                "type": "uint16be",
+                "name": "item1",
+                "offset": 0,
+                "length": 2,
+                "offsetbit": 0,
+                "scale": "1",
+                "mask": ""
+            }
+        ],
+        "swap1": "swap16",
+        "swap2": "swap32",
+        "swap3": "",
+        "swap1Type": "swap",
+        "swap2Type": "swap",
+        "swap3Type": "swap",
+        "msgProperty": "payload",
+        "msgPropertyType": "str",
+        "resultType": "value",
+        "resultTypeType": "return",
+        "multipleResult": true,
+        "fanOutMultipleResult": false,
+        "setTopic": true,
+        "outputs": 1,
+        "x": 570,
+        "y": 500,
+        "wires": [
+            [
+                "f9a88241a7f5dd4f"
+            ]
+        ]
+    },
+    {
+        "id": "7c0b6128ee571739",
+        "type": "function",
+        "z": "b038c76be813100c",
+        "name": "function 11",
+        "func": "// Input - REAL value\nvar realValue = msg.payload;\n\n// Convert REAL to Buffer\nvar buffer = Buffer.alloc(4); // Create a buffer of 4 bytes (32 bits)\nbuffer.writeFloatBE(realValue, 0); // Write the REAL value to the buffer\n\n// Output - Buffer\nmsg.payload = buffer;\nreturn msg;",
+        "outputs": 1,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 320,
+        "y": 500,
+        "wires": [
+            [
+                "2578df5702758cc0"
+            ]
+        ]
+    },
+    {
+        "id": "f9a88241a7f5dd4f",
+        "type": "modbus-write",
+        "z": "b038c76be813100c",
+        "name": "",
+        "showStatusActivities": false,
+        "showErrors": false,
+        "showWarnings": true,
+        "unitid": "1",
+        "dataType": "MHoldingRegisters",
+        "adr": "4",
+        "quantity": "2",
+        "server": "cf1130a27f1da8eb",
+        "emptyMsgOnFail": false,
+        "keepMsgProperties": false,
+        "delayOnStart": false,
+        "startDelayTime": "",
+        "x": 840,
+        "y": 500,
+        "wires": [
+            [],
+            []
+        ]
+    },
+    {
+        "id": "203c3a80b4f29065",
+        "type": "ui_slider",
+        "z": "b038c76be813100c",
+        "name": "",
+        "label": "Set-Point",
+        "tooltip": "",
+        "group": "5a2706733bcfce1f",
+        "order": 1,
+        "width": 0,
+        "height": 0,
+        "passthru": true,
+        "outs": "end",
+        "topic": "topic",
+        "topicType": "msg",
+        "min": 0,
+        "max": "100.0",
+        "step": "0.1",
+        "className": "",
+        "x": 140,
+        "y": 500,
+        "wires": [
+            [
+                "7c0b6128ee571739"
+            ]
+        ]
+    },
+    {
+        "id": "c18ec5864d980155",
+        "type": "function",
+        "z": "b038c76be813100c",
+        "name": "Convert to REAL",
+        "func": "// Create a buffer\nvar buf = new ArrayBuffer(4);\n\n// Create a data view of it\nvar view = new DataView(buf);\n\n// Write the ints to it\nview.setUint16(0, msg.payload[7]);\nview.setUint16(2, msg.payload[6]);\n\n// Read the bits as a float; note that by doing this, we're implicitly\n// converting it from a 32-bit float into JavaScript's native 64-bit double\nvar num = view.getFloat32(0);\n// Done\nmsg.topic = \"Filling Output\";\nmsg.payload = Number(num.toFixed(2));\nreturn msg;",
+        "outputs": 1,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 590,
+        "y": 740,
+        "wires": [
+            [
+                "387fd391bd307d17"
+            ]
+        ]
+    },
+    {
+        "id": "21bbf34127b7d514",
+        "type": "ui_artlessgauge",
+        "z": "b038c76be813100c",
+        "group": "5a2706733bcfce1f",
+        "order": 2,
+        "width": 0,
+        "height": 0,
+        "name": "Tank Level",
+        "icon": "",
+        "label": "Tank Level",
+        "unit": "%",
+        "layout": "linear",
+        "decimals": "2",
+        "differential": false,
+        "minmax": false,
+        "colorTrack": "#555555",
+        "style": "",
+        "colorFromTheme": true,
+        "property": "payload",
+        "secondary": "secondary",
+        "inline": false,
+        "animate": true,
+        "sectors": [
+            {
+                "val": 0,
+                "col": "#41bbbe",
+                "t": "min",
+                "dot": 0
+            },
+            {
+                "val": 30,
+                "col": "#ff6666",
+                "t": "sec",
+                "dot": 0
+            },
+            {
+                "val": 100,
+                "col": "#ff6666",
+                "t": "max",
+                "dot": 0
+            }
+        ],
+        "lineWidth": 3,
+        "bgcolorFromTheme": true,
+        "diffCenter": "",
+        "x": 830,
+        "y": 640,
+        "wires": []
+    },
+    {
+        "id": "c9ae2a6e1acd7631",
+        "type": "ui_artlessgauge",
+        "z": "b038c76be813100c",
+        "group": "5a2706733bcfce1f",
+        "order": 2,
+        "width": "3",
+        "height": "3",
+        "name": "Draining Output",
+        "icon": "",
+        "label": "Draining Output",
+        "unit": "%",
+        "layout": "radial",
+        "decimals": "2",
+        "differential": false,
+        "minmax": false,
+        "colorTrack": "#555555",
+        "style": "",
+        "colorFromTheme": true,
+        "property": "payload",
+        "secondary": "secondary",
+        "inline": false,
+        "animate": true,
+        "sectors": [
+            {
+                "val": 0,
+                "col": "#41bbbe",
+                "t": "min",
+                "dot": 0
+            },
+            {
+                "val": 30,
+                "col": "#ff6666",
+                "t": "sec",
+                "dot": 0
+            },
+            {
+                "val": 100,
+                "col": "#ff6666",
+                "t": "max",
+                "dot": 0
+            }
+        ],
+        "lineWidth": 3,
+        "bgcolorFromTheme": true,
+        "diffCenter": "",
+        "x": 840,
+        "y": 700,
+        "wires": []
+    },
+    {
+        "id": "387fd391bd307d17",
+        "type": "ui_artlessgauge",
+        "z": "b038c76be813100c",
+        "group": "5a2706733bcfce1f",
+        "order": 2,
+        "width": "3",
+        "height": "3",
+        "name": "Filling Output",
+        "icon": "",
+        "label": "Filling Output",
+        "unit": "%",
+        "layout": "radial",
+        "decimals": "2",
+        "differential": false,
+        "minmax": false,
+        "colorTrack": "#555555",
+        "style": "",
+        "colorFromTheme": true,
+        "property": "payload",
+        "secondary": "secondary",
+        "inline": false,
+        "animate": true,
+        "sectors": [
+            {
+                "val": 0,
+                "col": "#41bbbe",
+                "t": "min",
+                "dot": 0
+            },
+            {
+                "val": 30,
+                "col": "#ff6666",
+                "t": "sec",
+                "dot": 0
+            },
+            {
+                "val": 100,
+                "col": "#ff6666",
+                "t": "max",
+                "dot": 0
+            }
+        ],
+        "lineWidth": 3,
+        "bgcolorFromTheme": true,
+        "diffCenter": "",
+        "x": 830,
+        "y": 740,
+        "wires": []
+    },
+    {
+        "id": "be3468dee7a70f5d",
+        "type": "ui_chart",
+        "z": "b038c76be813100c",
+        "name": "",
+        "group": "5a2706733bcfce1f",
+        "order": 4,
+        "width": "6",
+        "height": "4",
+        "label": "Set-Point vs Actual Level",
+        "chartType": "line",
+        "legend": "true",
+        "xformat": "HH:mm:ss",
+        "interpolate": "linear",
+        "nodata": "",
+        "dot": false,
+        "ymin": "0",
+        "ymax": "100",
+        "removeOlder": "1",
+        "removeOlderPoints": "",
+        "removeOlderUnit": "60",
+        "cutout": 0,
+        "useOneColor": false,
+        "useUTC": false,
+        "colors": [
+            "#ff8000",
+            "#66e458",
+            "#ff7f0e",
+            "#2ca02c",
+            "#98df8a",
+            "#d62728",
+            "#ff9896",
+            "#9467bd",
+            "#c5b0d5"
+        ],
+        "outputs": 1,
+        "useDifferentColor": false,
+        "className": "",
+        "x": 870,
+        "y": 600,
+        "wires": [
+            []
+        ]
+    },
+    {
+        "id": "e529f788795a8575",
+        "type": "function",
+        "z": "b038c76be813100c",
+        "name": "Convert to REAL",
+        "func": "// Create a buffer\nvar buf = new ArrayBuffer(4);\n\n// Create a data view of it\nvar view = new DataView(buf);\n\n// Write the ints to it\nview.setUint16(0, msg.payload[1]);\nview.setUint16(2, msg.payload[0]);\n\n// Read the bits as a float; note that by doing this, we're implicitly\n// converting it from a 32-bit float into JavaScript's native 64-bit double\nvar num = view.getFloat32(0);\n// Done\nmsg.topic = \"Set-Point\";\nmsg.payload = Number(num.toFixed(2));\nreturn msg;",
+        "outputs": 1,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 590,
+        "y": 560,
+        "wires": [
+            [
+                "727f24417204ef05",
+                "be3468dee7a70f5d"
+            ]
+        ]
+    },
+    {
+        "id": "727f24417204ef05",
+        "type": "ui_artlessgauge",
+        "z": "b038c76be813100c",
+        "group": "5a2706733bcfce1f",
+        "order": 2,
+        "width": 0,
+        "height": 0,
+        "name": "Set-Point",
+        "icon": "",
+        "label": "Set-Point",
+        "unit": "%",
+        "layout": "linear",
+        "decimals": "2",
+        "differential": false,
+        "minmax": false,
+        "colorTrack": "#555555",
+        "style": "",
+        "colorFromTheme": true,
+        "property": "payload",
+        "secondary": "secondary",
+        "inline": false,
+        "animate": true,
+        "sectors": [
+            {
+                "val": 0,
+                "col": "#41bbbe",
+                "t": "min",
+                "dot": 0
+            },
+            {
+                "val": 30,
+                "col": "#ff6666",
+                "t": "sec",
+                "dot": 0
+            },
+            {
+                "val": 100,
+                "col": "#ff6666",
+                "t": "max",
+                "dot": 0
+            }
+        ],
+        "lineWidth": 3,
+        "bgcolorFromTheme": true,
+        "diffCenter": "",
+        "x": 820,
+        "y": 560,
+        "wires": []
+    },
+    {
+        "id": "44a3bc1f7634cf89",
+        "type": "buffer-parser",
+        "z": "b038c76be813100c",
+        "name": "",
+        "data": "payload",
+        "dataType": "msg",
+        "specification": "spec",
+        "specificationType": "ui",
+        "items": [
+            {
+                "type": "uint16be",
+                "name": "item1",
+                "offset": 0,
+                "length": 2,
+                "offsetbit": 0,
+                "scale": "1",
+                "mask": ""
+            }
+        ],
+        "swap1": "swap16",
+        "swap2": "swap32",
+        "swap3": "",
+        "swap1Type": "swap",
+        "swap2Type": "swap",
+        "swap3Type": "swap",
+        "msgProperty": "payload",
+        "msgPropertyType": "str",
+        "resultType": "value",
+        "resultTypeType": "return",
+        "multipleResult": true,
+        "fanOutMultipleResult": false,
+        "setTopic": true,
+        "outputs": 1,
+        "x": 550,
+        "y": 800,
+        "wires": [
+            [
+                "220ddc6ff820cd0a"
+            ]
+        ]
+    },
+    {
+        "id": "ab4853b97aed2af6",
+        "type": "function",
+        "z": "b038c76be813100c",
+        "name": "function 12",
+        "func": "// Input - REAL value\nvar realValue = msg.payload;\n\n// Convert REAL to Buffer\nvar buffer = Buffer.alloc(4); // Create a buffer of 4 bytes (32 bits)\nbuffer.writeFloatBE(realValue, 0); // Write the REAL value to the buffer\n\n// Output - Buffer\nmsg.payload = buffer;\nreturn msg;",
+        "outputs": 1,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 310,
+        "y": 800,
+        "wires": [
+            [
+                "44a3bc1f7634cf89"
+            ]
+        ]
+    },
+    {
+        "id": "220ddc6ff820cd0a",
+        "type": "modbus-write",
+        "z": "b038c76be813100c",
+        "name": "",
+        "showStatusActivities": false,
+        "showErrors": false,
+        "showWarnings": true,
+        "unitid": "1",
+        "dataType": "MHoldingRegisters",
+        "adr": "8",
+        "quantity": "2",
+        "server": "cf1130a27f1da8eb",
+        "emptyMsgOnFail": false,
+        "keepMsgProperties": false,
+        "delayOnStart": false,
+        "startDelayTime": "",
+        "x": 820,
+        "y": 800,
+        "wires": [
+            [],
+            []
+        ]
+    },
+    {
+        "id": "537dd12da81b757d",
+        "type": "ui_slider",
+        "z": "b038c76be813100c",
+        "name": "",
+        "label": "Set Draining",
+        "tooltip": "",
+        "group": "5a2706733bcfce1f",
+        "order": 1,
+        "width": 0,
+        "height": 0,
+        "passthru": true,
+        "outs": "end",
+        "topic": "topic",
+        "topicType": "msg",
+        "min": 0,
+        "max": "100.0",
+        "step": "0.1",
+        "className": "",
+        "x": 130,
+        "y": 800,
+        "wires": [
+            [
+                "ab4853b97aed2af6"
+            ]
+        ]
+    },
+    {
+        "id": "461e7d161249a3c6",
+        "type": "debug",
+        "z": "b038c76be813100c",
+        "name": "debug 11",
+        "active": true,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "false",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 820,
+        "y": 420,
+        "wires": []
+    },
+    {
+        "id": "812fd13fe1356f70",
+        "type": "debug",
+        "z": "b038c76be813100c",
+        "name": "debug 12",
+        "active": false,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "false",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 560,
+        "y": 80,
+        "wires": []
+    },
+    {
+        "id": "b7147682c31c8f6e",
+        "type": "debug",
+        "z": "b038c76be813100c",
+        "name": "debug 13",
+        "active": true,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "false",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 560,
+        "y": 320,
+        "wires": []
+    },
+    {
+        "id": "a0442dcf34f94a0e",
+        "type": "debug",
+        "z": "b038c76be813100c",
+        "name": "debug 14",
+        "active": false,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "false",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 560,
+        "y": 280,
+        "wires": []
+    },
+    {
+        "id": "cf1130a27f1da8eb",
+        "type": "modbus-client",
+        "name": "Micro850",
+        "clienttype": "tcp",
+        "bufferCommands": true,
+        "stateLogEnabled": false,
+        "queueLogEnabled": false,
+        "failureLogEnabled": false,
+        "tcpHost": "192.168.0.67",
+        "tcpPort": "502",
+        "tcpType": "DEFAULT",
+        "serialPort": "/dev/ttyUSB",
+        "serialType": "RTU-BUFFERD",
+        "serialBaudrate": "9600",
+        "serialDatabits": "8",
+        "serialStopbits": "1",
+        "serialParity": "none",
+        "serialConnectionDelay": "100",
+        "serialAsciiResponseStartDelimiter": "",
+        "unit_id": "1",
+        "commandDelay": "1",
+        "clientTimeout": "1000",
+        "reconnectOnTimeout": true,
+        "reconnectTimeout": "2000",
+        "parallelUnitIdsAllowed": true
+    },
+    {
+        "id": "d33f5be9621178a8",
+        "type": "ui_group",
+        "name": "Temperature Control",
+        "tab": "4a71cdd2253f1353",
+        "order": 1,
+        "disp": true,
+        "width": "6",
+        "collapse": false,
+        "className": ""
+    },
+    {
+        "id": "5a2706733bcfce1f",
+        "type": "ui_group",
+        "name": "Level Controller",
+        "tab": "4a71cdd2253f1353",
+        "order": 2,
+        "disp": true,
+        "width": "6",
+        "collapse": false,
+        "className": ""
+    },
+    {
+        "id": "4a71cdd2253f1353",
+        "type": "ui_tab",
+        "name": "Process Simulator",
+        "icon": "dashboard",
+        "order": 2,
+        "disabled": false,
+        "hidden": false
+    }
+]

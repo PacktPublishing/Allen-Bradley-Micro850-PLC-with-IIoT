@@ -1,0 +1,315 @@
+[
+    {
+        "id": "0066fc26f50eedca",
+        "type": "tab",
+        "label": "Micro850",
+        "disabled": false,
+        "info": "",
+        "env": []
+    },
+    {
+        "id": "99a09130bd567a0c",
+        "type": "comment",
+        "z": "0066fc26f50eedca",
+        "name": "ASRS",
+        "info": "",
+        "x": 90,
+        "y": 60,
+        "wires": []
+    },
+    {
+        "id": "e3e52f4c2b9e9402",
+        "type": "inject",
+        "z": "0066fc26f50eedca",
+        "name": "",
+        "props": [
+            {
+                "p": "payload"
+            },
+            {
+                "p": "topic",
+                "vt": "str"
+            }
+        ],
+        "repeat": "2",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "topic": "",
+        "payload": "",
+        "payloadType": "date",
+        "x": 130,
+        "y": 100,
+        "wires": [
+            [
+                "9e661aa0a89abaf1"
+            ]
+        ]
+    },
+    {
+        "id": "9e661aa0a89abaf1",
+        "type": "modbus-getter",
+        "z": "0066fc26f50eedca",
+        "name": "",
+        "showStatusActivities": false,
+        "showErrors": false,
+        "showWarnings": true,
+        "logIOActivities": false,
+        "unitid": "1",
+        "dataType": "HoldingRegister",
+        "adr": "0",
+        "quantity": "24",
+        "server": "68a3b52de8f44f0c",
+        "useIOFile": false,
+        "ioFile": "",
+        "useIOForPayload": false,
+        "emptyMsgOnFail": false,
+        "keepMsgProperties": false,
+        "delayOnStart": false,
+        "startDelayTime": "",
+        "x": 340,
+        "y": 100,
+        "wires": [
+            [
+                "0ba369a9fb654bac",
+                "f8b6a11d3601acbd"
+            ],
+            []
+        ]
+    },
+    {
+        "id": "0ba369a9fb654bac",
+        "type": "function",
+        "z": "0066fc26f50eedca",
+        "name": "function 14",
+        "func": "var data = [];\nfor (let index = 0; index < msg.payload.length; index++) {\n    if (index == 0 || index % 2 == 0)\n    {data.push(msg.payload[index]);}\n}\nmsg.payload = data;\nreturn msg;",
+        "outputs": 1,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 550,
+        "y": 100,
+        "wires": [
+            [
+                "806228e2fc9f4348",
+                "dd559dfb68b71bf6"
+            ]
+        ]
+    },
+    {
+        "id": "07a6b6c0cb15808b",
+        "type": "ui_table",
+        "z": "0066fc26f50eedca",
+        "group": "9894f91dd64dba82",
+        "name": "",
+        "order": 0,
+        "width": "11",
+        "height": "3",
+        "columns": [
+            {
+                "field": "pos1",
+                "title": "pos1",
+                "width": "15px",
+                "align": "center",
+                "formatter": "plaintext",
+                "formatterParams": {
+                    "target": "_blank"
+                }
+            },
+            {
+                "field": "Column3",
+                "title": "Column3",
+                "width": "25px",
+                "align": "center",
+                "formatter": "color",
+                "formatterParams": {
+                    "target": "_blank"
+                }
+            },
+            {
+                "field": "Column2",
+                "title": "Column2",
+                "width": "25px",
+                "align": "left",
+                "formatter": "color",
+                "formatterParams": {
+                    "target": "_blank"
+                }
+            },
+            {
+                "field": "Column1",
+                "title": "Column1",
+                "width": "25px",
+                "align": "left",
+                "formatter": "color",
+                "formatterParams": {
+                    "target": "_blank"
+                }
+            },
+            {
+                "field": "pos2",
+                "title": "pos2",
+                "width": "15px",
+                "align": "center",
+                "formatter": "plaintext",
+                "formatterParams": {
+                    "target": "_blank"
+                }
+            }
+        ],
+        "outputs": 0,
+        "cts": false,
+        "x": 930,
+        "y": 100,
+        "wires": []
+    },
+    {
+        "id": "806228e2fc9f4348",
+        "type": "split",
+        "z": "0066fc26f50eedca",
+        "name": "",
+        "splt": "\\n",
+        "spltType": "str",
+        "arraySplt": "3",
+        "arraySpltType": "len",
+        "stream": false,
+        "addname": "",
+        "x": 750,
+        "y": 100,
+        "wires": [
+            [
+                "07a6b6c0cb15808b"
+            ]
+        ]
+    },
+    {
+        "id": "ac8a9c131fd00707",
+        "type": "debug",
+        "z": "0066fc26f50eedca",
+        "name": "debug 20",
+        "active": false,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "false",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 940,
+        "y": 140,
+        "wires": []
+    },
+    {
+        "id": "dd559dfb68b71bf6",
+        "type": "function",
+        "z": "0066fc26f50eedca",
+        "name": "function 15",
+        "func": "var brown = \"#A58127\";\nvar green = \"#1ECF1E \";\nvar blue = \"#1971B2\";\nvar empty = '#FFFFF';\nvar data = [];\n\nfor (let index = 0; index < msg.payload.length; index++) {\n    if (msg.payload[index] == 0)     { data.push(empty); }\n    else if (msg.payload[index] == 1) { data.push(green); }\n    else if (msg.payload[index] == 2) { data.push(blue); }\n    else { data.push(brown); }\n\n}\n\n\nmsg.payload = [\n    {\n        \"pos1\": \"4,3\",\n        \"Column3\": data[11], \n        \"Column2\": data[10], \n        \"Column1\": data[9], \n        \"pos2\": \"4,1\"\n    },\n    {\n        \"pos1\": \"3,3\",\n        \"Column3\": data[8],\n        \"Column2\": data[7],\n        \"Column1\": data[6], \n        \"pos2\": \"3,1\"\n    },\n    {\n        \"pos1\": \"2,3\",\n        \"Column3\": data[5],\n        \"Column2\": data[4],\n        \"Column1\": data[3], \n        \"pos2\": \"2,1\"\n    },\n    {\n        \"pos1\": \"1,3\",\n        \"Column3\": data[2],\n        \"Column2\": data[1],\n        \"Column1\": data[0], \n        \"pos2\": \"1,1\"\n    }\n]\nreturn msg;\n\n",
+        "outputs": 1,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 750,
+        "y": 140,
+        "wires": [
+            [
+                "07a6b6c0cb15808b",
+                "ac8a9c131fd00707"
+            ]
+        ]
+    },
+    {
+        "id": "a9a14aa0574ec9b5",
+        "type": "inject",
+        "z": "0066fc26f50eedca",
+        "name": "",
+        "props": [
+            {
+                "p": "payload"
+            },
+            {
+                "p": "topic",
+                "vt": "str"
+            }
+        ],
+        "repeat": "",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "topic": "",
+        "payload": "[]",
+        "payloadType": "json",
+        "x": 770,
+        "y": 200,
+        "wires": [
+            [
+                "07a6b6c0cb15808b"
+            ]
+        ]
+    },
+    {
+        "id": "f8b6a11d3601acbd",
+        "type": "debug",
+        "z": "0066fc26f50eedca",
+        "name": "debug 22",
+        "active": false,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "false",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 540,
+        "y": 140,
+        "wires": []
+    },
+    {
+        "id": "68a3b52de8f44f0c",
+        "type": "modbus-client",
+        "name": "Micro850",
+        "clienttype": "tcp",
+        "bufferCommands": true,
+        "stateLogEnabled": false,
+        "queueLogEnabled": false,
+        "failureLogEnabled": true,
+        "tcpHost": "192.168.0.67",
+        "tcpPort": "502",
+        "tcpType": "DEFAULT",
+        "serialPort": "/dev/ttyUSB",
+        "serialType": "RTU-BUFFERD",
+        "serialBaudrate": "9600",
+        "serialDatabits": "8",
+        "serialStopbits": "1",
+        "serialParity": "none",
+        "serialConnectionDelay": "100",
+        "serialAsciiResponseStartDelimiter": "0x3A",
+        "unit_id": 1,
+        "commandDelay": 1,
+        "clientTimeout": 1000,
+        "reconnectOnTimeout": true,
+        "reconnectTimeout": 2000,
+        "parallelUnitIdsAllowed": true,
+        "showWarnings": true,
+        "showLogs": true
+    },
+    {
+        "id": "9894f91dd64dba82",
+        "type": "ui_group",
+        "name": "ASRS",
+        "tab": "f08182f572f9d60e",
+        "order": 2,
+        "disp": true,
+        "width": "11",
+        "collapse": false,
+        "className": ""
+    },
+    {
+        "id": "f08182f572f9d60e",
+        "type": "ui_tab",
+        "name": "Simulation data",
+        "icon": "dashboard",
+        "disabled": false,
+        "hidden": false
+    }
+]
